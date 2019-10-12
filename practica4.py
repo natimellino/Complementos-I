@@ -1,7 +1,9 @@
-# Ejercicio 1: dado un grafo no dirigido, en formato de 
+# Ejercicio 1: dado un grafo no dirigido, en formato de
 # listas con pesos y un vértice origen 'v', aplica el
 # algoritmo de Dijkstra para hallar el costo del camino
 # más corto de v al resto de los vértices.
+
+import math
 
 def adyacentes(grafo, v):
   # Dado un vértice, devuelve una lista con
@@ -22,7 +24,7 @@ def matriz_costos(grafo):
   for i in range(cantVertices):
     matriz.append([])
     for j in range(cantVertices):
-      matriz[i].append(0) 
+      matriz[i].append(0)
   # El índice de cada vértice en la matriz se corresponde con el índice
   # que ocupa en la lista de vértices.
   for arista in grafo[1]:
@@ -39,54 +41,52 @@ def matriz_costos(grafo):
 
 def extraer_minimo(costos, visitados):
   nodos = list(costos.keys())
-  minimo = nodos[0]
+  costoMinimo = math.inf
+  minimo = 'a'
+
   for nodo in nodos:
-    if costos.get(nodo) != 0 and not nodo in visitados and costos.get(nodo) < costos.get(minimo):
+    costoNodo = costos[nodo]
+    if costoNodo < costoMinimo and nodo not in visitados:
       minimo = nodo
+      costoMinimo = costoNodo
+
   return minimo
 
 
-# no anda esta berga revisar funcion extraer_minimo
-def dijkstra_costos(matriz, grafo, v, costos):
+def dijkstra(grafo, v):
   vertices = grafo[0]
   aristas = grafo[1]
+  matriz = matriz_costos(grafo)
   n = len(vertices) # Cantidad de vértices.
   visitados = []
-  i = 0
-  while len(visitados) < n:
-    # En la primera iteración arranca siendo v el nodo actual.
-    if i == 0:
-      nodoActual = v
-    # En el resto de los casos es el nodo con el valor mínimo no visitado.
-    else:
-      nodoActual = extraer_minimo(costos, v)
-    for x in adyacentes(grafo, nodoActual):
-      if not x in visitados:
-        i1 = grafo[0].index(nodoActual)
-        i2 = grafo[0].index(x)
-        costoNuevo = costos.get(nodoActual) + matriz[i1][i2]
-        if costoNuevo < costos.get(v) or costos.get(v) == 0:
-          costos.pop(v)
-          costos[v] = costoNuevo
-    visitados.append(nodoActual)
-    print(visitados)
-    i+=1
-  return costos
-
-  
-def aux(grafo, v):
-  vertices = grafo[0]
-  matriz = matriz_costos(grafo)  
   costos = dict()
   for vert in vertices:
-    costos[vert] = 0
-  costos = dijkstra_costos(matriz, grafo, v, costos)
-  print(list(costos.items()))
+    costos[vert] = math.inf
+  costos[v] = 0
+  nodos = list(costos.keys())
 
-def main():
-  grafo = [['a', 'b', 'c', 'd'], [('a', 'd', 3), ('c', 'b', 5), ('a', 'c', 4), ('a', 'b', 1)]]
-  #print(adyacentes(grafo, 'a'))
-  #print(matriz_costos(grafo))
-  aux(grafo, 'a')
+  while len(visitados) < n:
+      nodoActual = extraer_minimo(costos, visitados)
 
-main()
+      for x in adyacentes(grafo, nodoActual):
+          if x not in visitados:
+              i1 = grafo[0].index(nodoActual)
+              i2 = grafo[0].index(x)
+              costoNuevo = costos.get(nodoActual) + matriz[i1][i2]
+              if costoNuevo < costos[x] or costos[x] == -1:
+                    costos[x] = costoNuevo
+      visitados.append(nodoActual)
+
+  for nodo in nodos:
+      if costos[nodo] == math.inf:
+          costos.pop(nodo)
+
+  return costos
+
+
+# def main():
+#   grafo = [['a', 'b', 'c', 'd'], [('a', 'd', 3), ('c', 'b', 1), ('a', 'c', 4), ('a', 'b', 1)]]
+#   #print(matriz_costos(grafo))
+#   aux(grafo, 'a')
+#
+# main()
