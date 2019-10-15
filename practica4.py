@@ -53,6 +53,45 @@ def extraer_minimo(costos, visitados):
   return minimo
 
 
+def dijkstra_2(grafo, v):
+  vertices = grafo[0]
+  aristas = grafo[1]
+  matriz = matriz_costos(grafo)
+  n = len(vertices) # Cantidad de vértices.
+  visitados = []
+  costos = dict()
+  for vert in vertices:
+    costos[vert] = math.inf
+  costos[v] = 0
+  caminos = dict()
+  for vert in vertices:
+    caminos[vert] = []
+
+  while len(visitados) < n:
+      nodoActual = extraer_minimo(costos, visitados)
+      caminoActual = caminos[nodoActual]
+      caminoActual.append(nodoActual)
+      caminos[nodoActual] = caminoActual
+
+      for x in adyacentes(grafo, nodoActual):
+          if x not in visitados:
+              i1 = grafo[0].index(nodoActual)
+              i2 = grafo[0].index(x)
+              costoNuevo = costos.get(nodoActual) + matriz[i1][i2]
+              if costoNuevo < costos[x] or costos[x] == -1:
+                    costos[x] = costoNuevo
+                    caminos[x] = caminoActual.copy()
+      visitados.append(nodoActual)
+
+  for vertice in vertices:
+      if costos[vertice] == math.inf:
+          costos.pop(vertice)
+          caminos.pop(vertice)
+      elif vertice == v:
+          caminos[vertice] = [v]
+
+  return caminos
+
 def dijkstra(grafo, v):
   vertices = grafo[0]
   aristas = grafo[1]
@@ -63,7 +102,7 @@ def dijkstra(grafo, v):
   for vert in vertices:
     costos[vert] = math.inf
   costos[v] = 0
-  nodos = list(costos.keys())
+  caminos = [[]] * n
 
   while len(visitados) < n:
       nodoActual = extraer_minimo(costos, visitados)
@@ -77,12 +116,11 @@ def dijkstra(grafo, v):
                     costos[x] = costoNuevo
       visitados.append(nodoActual)
 
-  for nodo in nodos:
-      if costos[nodo] == math.inf:
-          costos.pop(nodo)
+  for vertice in vertices:
+      if costos[vertice] == math.inf:
+          costos.pop(vertice)
 
   return costos
-
 
 # def main():
 #   grafo = [['a', 'b', 'c', 'd'], [('a', 'd', 3), ('c', 'b', 1), ('a', 'c', 4), ('a', 'b', 1)]]
