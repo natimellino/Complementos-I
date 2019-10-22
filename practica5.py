@@ -1,24 +1,3 @@
-# Algoritmo de Prim.
-
-def matriz_costos(grafo):
-  # Creamos la matriz.
-  matriz = []
-  cantVertices = len(grafo[0])
-  for i in range(cantVertices):
-    matriz.append([])
-    for j in range(cantVertices):
-      matriz[i].append(0)
-  # El índice de cada vértice en la matriz se corresponde con el índice
-  # que ocupa en la lista de vértices.
-  for arista in grafo[1]:
-    u = arista[0]
-    v = arista[1]
-    costo = arista[2]
-    i1 = grafo[0].index(u)
-    i2 = grafo[0].index(v)
-    matriz[i1][i2] = costo
-    matriz[i2][i1] = costo
-  return matriz
 
 def adyacentes(grafo, v):
   # Dado un vértice, devuelve una lista con
@@ -42,6 +21,7 @@ def incidentes(grafo, vertice):
     return aristas
 
 def minimaArista(aristas):
+    # Dado un conjunto de aristas, devuelve la arista de menor peso.
     minA = aristas[0]
     minCosto = aristas[0][2]
 
@@ -51,6 +31,8 @@ def minimaArista(aristas):
             minCosto = minA[2]
 
     return minA
+
+# Algoritmo de Prim.
 
 def prim(grafo):
     n = len(grafo[0])
@@ -78,5 +60,34 @@ def prim(grafo):
                 arbol[1].append(minArista)
             else:
                 aristas.remove(minArista)
-    print(arbol)
     return arbol
+
+# Algoritmo de Kruskal
+
+def kruskal(G):
+    aristasVisitadas = []
+    vertices = G[0]
+    aristas = G[1]
+    arbol = [[], []]
+    cv = len(vertices)  
+    while len(arbol[1]) != cv - 1 and len(aristas) > 0:
+        minArista = minimaArista(aristas)
+        if minArista not in aristasVisitadas:
+            aristasVisitadas.append(minArista)
+            if not (minArista[0] in arbol[0] and minArista[1] in arbol[0]):
+                arbol[0].append(minArista[0])
+                arbol[0].append(minArista[1])
+                arbol[1].append(minArista)
+            else:
+                aristas.pop(aristas.index(minArista))
+        else:
+            aristas.pop(aristas.index(minArista))
+    return arbol
+
+def main():
+    grafo1 = (['a', 'b', 'c'], [('a', 'b', 1), ('b', 'a', 2),('c', 'b', 4),('b', 'c', 3),('b', 'c', 5)])
+    grafo2 = (['a', 'b', 'c', 'd', 'e', 'f'], [('a', 'b', 1), 
+                ('b', 'a', 2), ('c', 'b', 4),('b', 'c', 3),('b', 'c', 5),('e', 'f', 10)])
+    print(kruskal(grafo1))
+
+main()
